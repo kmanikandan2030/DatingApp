@@ -1,0 +1,38 @@
+dotnet --info
+
+HELP
+--------------
+dotnet -h
+dotnet new -h
+dotnet sln -h
+
+INFO
+----------
+dotnet new list
+
+SSL Certificate - Optional
+-------------------------------------
+dotnet dev-certs https --trust
+(OR)
+dotnet dev-certs https --clean
+
+COMMANDS
+------------------
+1) dotnet new sln --> Create new empty solution.
+2) dotnet new webapi -n API --use-controllers --> Create new WebApi project
+3) dotnet sln add API --> Add API project to solution
+4) dotnet sln list --> To see the list of projects in solution
+
+Migration
+---------------------
+dotnet tool install dotnet-ef -g
+dotnet tool update dotnet-ef -g
+
+dotnet ef migrations add Initial -o Data/Migrations
+ 
+With Start up project
+dotnet ef migrations add "Initial" -o Data/Migrations  -s ../RTBooking.Api
+
+GIT
+----------------------------
+dotnet new gitignore
