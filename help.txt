@@ -36,3 +36,36 @@ dotnet ef migrations add "Initial" -o Data/Migrations  -s ../RTBooking.Api
 GIT
 ----------------------------
 dotnet new gitignore
+
+GIT terminal with branch name - DatingApp (main)
+https://ohmyz.sh/
+
+Angular
+-----------------
+npm i -g @angular/cli
+npm install -g @angular/cli @angular/core
+ng version
+
+To target older browser, then we need change in compilerOptions --> "target" setting in tsconfig.json
+
+VS Code
+--------
+Settings-->Search for "bracket", "auto close"
+Enable auto close - Brackets, Comments, Quotes in Settings
+
+SSL
+----------------
+mkcert-
+https://github.com/FiloSottile/mkcert
+From admin command prompt,
+1.Install mkcert. (>choco install mkcert) - (Software installed to 'C:\ProgramData\chocolatey\lib\mkcert')
+2.Create a locally trusted CA with >mkcert -install.
+3.Create a folder "ssl" under angular project directory "DatingApp/client/ssl"
+4.Generate an SSL certificate with >mkcert localhost. 
+5.In angular.json, add ssl details under serve-->options.
+    "serve": {
+          "options": {
+            "ssl": true,
+            "sslCert": "./ssl/localhost.pem",
+            "sslKey": "./ssl/localhost-key.pem"
+          },
