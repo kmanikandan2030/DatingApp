@@ -33,6 +33,8 @@ dotnet ef migrations add Initial -o Data/Migrations
 With Start up project
 dotnet ef migrations add "Initial" -o Data/Migrations  -s ../RTBooking.Api
 
+Note - For second migration, specfifying output folder (-o) is not required
+
 GIT
 ----------------------------
 dotnet new gitignore
@@ -69,3 +71,101 @@ From admin command prompt,
             "sslCert": "./ssl/localhost.pem",
             "sslKey": "./ssl/localhost-key.pem"
           },
+
+Hot-Reload Disable 
+-------------
+dotnet watch --no-hot-reload
+Properties/launchsettings.json --> "hotReloadEnabled": false   --> This doesn't disable Hot reload
+
+Debugging
+---------------
+If launch.json & tasks.json files which is available in .vscode folder are not available, then
+In command palette, search for .net --> Generate Assets for Build and Debug
+---Two Profiles
+.NET Core Launch (web) - Need to stop the running app and then launch
+.NET Core Attach - Attach to existing debugger
+
+Controller Argument Mapping
+-------------------------------
+Json body is an object, so it will not automatically match with plain string arguments in controller's action method.
+--Request body:
+{
+	"username": "bob",
+	"password": "password"
+}
+--Controller:
+[HttpPost("register")]   
+public async Task<ActionResult<AppUser>> Register(string username,string password){
+
+} 
+In above action method, we can send arguments as queryString - Example: {{url}}/api/account/register?username=sam&password=password
+There can be only one "[RequestBody]" we can mentioned in parameter
+
+DTO
+------------------
+We need to use DTO to map the JSON object from the request.
+
+[ApiController]
+------------------
+--Mapping
+It is responsible for automapping Json Object from request to DTO Mapping in action method. Without "ApiController", we need to specify [FromBody] to match to work.
+
+--Validation
+It does the validation specified in DTO (data annotation) before reaching the controller's action method. Without "ApiController" then we need to check the property "ModelState" which contains the error details for manual validation
+
+AUTH
+---------------
+For better password storage in db use, Hash + Salt
+--Register
+    using var hmac = new HMACSHA512();
+    var user = new AppUser{
+        UserName = registerDto.Username.ToLower(),
+        PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+        PasswordSalt = hmac.Key
+    };
+--Login
+    using var hmac = new HMACSHA512(user.PasswordSalt);
+    var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
+    for (int i = 0; i < computedHash.Length; i++)
+    {
+        if(computedHash[i]!=user.PasswordHash[i]) return Unauthorized("Invalid Password");
+    }
+
+JWT
+-----------
+--Package - System.IdentityModel.Tokens.Jwt 
+
+  Symmetric Encryption - Same Private Key for encryption and decryption.
+  PlainText --> SymmetricKey(123) --> Cipher Text --> SymmetricKey(123) --> PlainText
+  Faster, Smaller, Good for Large amount of data, Higher chance of compromise
+
+  Asymmetric Encryption - Public Key for encryption and Private Key for decryption.
+  PlainText --> PublicKey(123) --> Cipher Text --> PrivateKey(456) --> PlainText
+  Slower, Longer, Good for Smaller Transaction (https), More Secure than Symmetric
+
+--Steps for Creating JWT Token
+  1) Symmetric Key
+  2) Signining Credential - (Key + Algorithm)
+  3) Claims List - If any
+  4) var token = JwtSecurityToken({issuer, audience,claim,expdt,signingCredentials})
+  5) JwtSecurityTokenHander().writeToken(token)
+
+--Package - Microsoft.AspNetCore.Authentication.JwtBearer (For provide authentication scheme in Program.cs)
+
+--Authentication & Authorization Middleware
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+      .AddJwtBearer(opt=>opt.TokenValidationParameters = new TokenValidationParameters
+      {
+          ValidateIssuerSigningKey = true,
+          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+          ValidateIssuer = true,
+          ValidateAudience = true
+      });
+
+    var app = builder.Build();
+    app.UseAuthentication(); // Do you have valid token? 
+    app.UseAuthorization(); // Ok, you have a valid token, what are you allowed to do?
+
+----Example:
+    In Night club. Person with valid Identity card entering - Authentication
+    But age is lesser than 18, so not authorized - Authorization
