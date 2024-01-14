@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccountService } from '../../_services/account.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -11,6 +12,7 @@ import { AccountService } from '../../_services/account.service';
 })
 export class RegisterComponent {
 currentDate = new Date().toJSON().slice(0, 10);
+toastr = inject(ToastrService);
 //console.log(currentDate); // "2022-06-17"
 
 model: any = {
@@ -21,7 +23,14 @@ accountService = inject(AccountService);
 
 register(){
   this.accountService.register(this.model).subscribe({
-    next:(result)=>this.cancel()
+    next:(result)=>this.cancel(),
+    error: error => {      
+      const {errors} = error.error
+      Object.values<string>(errors).forEach(element => {
+         this.toastr.error(element);
+      });
+      
+    }
   });
 }
 cancel(){
