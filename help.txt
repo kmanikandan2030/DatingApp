@@ -132,7 +132,7 @@ For better password storage in db use, Hash + Salt
     }
 
 JWT
------------
+--------------------------------------------------------------------------------------------------------------------
 --Package - System.IdentityModel.Tokens.Jwt 
 
   Symmetric Encryption - Same Private Key for encryption and decryption.
@@ -169,3 +169,98 @@ JWT
 ----Example:
     In Night club. Person with valid Identity card entering - Authentication
     But age is lesser than 18, so not authorized - Authorization
+--------------------------------------------------------------------------------------------------------------------
+--Angular
+>ng g --help
+>ng g c nav --dry-run  (Showing what files will be created)
+>ng g c nav --skip-tests --dry-run
+----------------------------------------------------ANGULAR FORMS-----------------------
+#### Template Form (NG Form) - FormsModule
+    <form #loginForm1="ngForm" (ngSubmit)="onSubmitHandler1()" class="d-flex" autocomplete="off">
+        <input class="form-control me-2" type="text" placeholder="Username" name="UserName" [(ngModel)]="model.UserName">
+        <input class="form-control me-2" type="password" placeholder="Password" name="Password" [(ngModel)]="model.Password" >
+        <button class="btn btn-outline-success" type="submit" [disabled]="!loginForm1.valid">Login</button>
+      </form>
+    model: any = {};
+    onSubmitHandler1(){
+      console.log(this.model);    
+    }
+
+#### Reactive Form (Form Group) - ReactiveFormsModule
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmitHandler()" class="d-flex" autocomplete="off">
+        <input class="form-control me-2" type="text" placeholder="Username" formControlName="UserName">
+        <input class="form-control me-2" type="password" placeholder="Password" formControlName="Password" >
+        <button class="btn btn-outline-success" type="submit" [disabled]="!loginForm.valid">Login</button>
+      </form>
+      loginForm!: FormGroup;
+      formBuilder = inject(FormBuilder)
+      ngOnInit(): void {
+        this.loginForm = this.formBuilder.group({
+          UserName: ['',Validators.compose([Validators.required, Validators.minLength(3)])], 
+          Password: ['',Validators.compose([Validators.required])], 
+        })
+      }
+
+      onSubmitHandler(){
+        console.log(this.loginForm.value);    
+      }
+----------------------------------------------------END ANGULAR FORMS----------------------------------------------
+LOCAL storage
+-------------------------------------
+--SET - Convert user object to string using JSON.strinify()
+    localStorage.setItem('user', JSON.stringify(user))
+    
+--GET - Convert string to object using JSON.parse()
+    const user: User = JSON.parse(localStorage.getItem('user')!);
+
+-------------------------------------
+Observables & RxJS (Reactive Extension Java Script)
+---------------------
+pipe - Used to transform the data before it pass it to subscribers. (chain a pipe and add many functions)
+--Example: To return only member id instead of complete user details.
+  getMembers(){
+      return this.httpClient.get<{id: string}>('api/users').pipe(
+        map(members=>{
+          return members.id;
+        })
+      )
+    }
+--Async Pipe (|) -- Used to subscribe and unsubscribe automatically from the Observables.
+
+Observable vs Subject vs Behavior Subject
+
+--Observable
+Read-Only, can't emit values, subscribers cannot receive value after subscription.
+obs = new Observable() 
+of(1,2,3)
+
+--Subject
+Can emit events/values to its subscribers using next(), but subscribes get only latest emitted values. Previous emitted values before subscription are not available.
+  --Sample CODE
+  subj = new Subject(); 
+  ngOnInit(): void {    
+    this.subj.next("Value 0")
+    this.subj.subscribe(res=>console.log(res));
+    this.subj.next("Value 1")
+    this.subj.next("Value 2") 
+  }
+  Output: 
+  Value 1
+  Value 2
+
+--Behavior Subject
+Can emit events/values, subscribes get previous and latest emitted values.
+  --Sample CODE
+  bevSubj = new BehaviorSubject("BValue -1");
+  ngOnInit(): void {    
+    this.bevSubj.next("BValue 0")
+    this.bevSubj.subscribe(res=>console.log(res));
+    this.bevSubj.next("BValue 1")
+    this.bevSubj.next("BValue 2")
+  }
+  Output:
+  BValue 0
+  BValue 1
+  BValue 2
+
+--------------------------------------------------------------------------------------------------------------------

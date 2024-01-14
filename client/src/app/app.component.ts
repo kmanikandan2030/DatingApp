@@ -3,32 +3,24 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { NavComponent } from './nav/nav.component';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { AccountService } from './_services/account.service';
+import { User } from './_models/user';
+import { HomeComponent } from './_pages/home/home.component';
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, TooltipModule],
+  imports: [CommonModule, RouterOutlet, TooltipModule, NavComponent, HomeComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'Dating App';
-  users: any = []
-  httpclient = inject(HttpClient);
-
-  ngOnInit(): void {
-    this.httpclient.get('https://localhost:5001/api/users').subscribe({
-      next: (res)=>{
-        this.users = res;
-        console.log(res);        
-      },
-      error: (err)=>{
-        console.log(err);        
-      },
-      complete: ()=>{
-        console.log("User request completed...");        
-      }
-    })
+  title = 'Dating App';  
+  accountService = inject(AccountService)
+  ngOnInit(): void {    
+    this.accountService.setCurrentUser();
   }
 }

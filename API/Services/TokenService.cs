@@ -15,10 +15,13 @@ namespace API.Services
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
             
+            if(user.DOJ==DateOnly.MinValue)
+                user.DOJ = new DateOnly(2020,05,25);
+
             var claims = new List<Claim>{
                 new Claim(JwtRegisteredClaimNames.NameId,user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),                
+                new Claim(JwtRegisteredClaimNames.Email, user.Email??""),                
                 new Claim("DOJ", user.DOJ.ToString("yyyy-MM-dd"))
             };
 

@@ -21,7 +21,9 @@ namespace API.Controllers
             var user = new AppUser{
                 UserName = registerDto.Username.ToLower(),
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                PasswordSalt = hmac.Key
+                PasswordSalt = hmac.Key,
+                Email = registerDto.Email,
+                DOJ =  string.IsNullOrEmpty(registerDto.DOJ)? DateOnly.FromDateTime(DateTime.Now): DateOnly.Parse(registerDto.DOJ)
             };
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
