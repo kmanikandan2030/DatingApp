@@ -264,3 +264,49 @@ Can emit events/values, subscribes get previous and latest emitted values.
   BValue 2
 
 --------------------------------------------------------------------------------------------------------------------
+DATA SEED
+----------------------------------------
+
+GetService - returns null if the service is not registered
+GetRequiredService - throws an Exception if the service is not registered
+
+  using var scope = app.Services.CreateScope();
+  var service = scope.ServiceProvider;
+  try
+  {
+      var context = service.GetRequiredService<DataContext>();
+      await context.Database.MigrateAsync();
+      if(!context.Users.Any()){
+          await Seed.SeedUsers(context);
+      }    
+  }
+  catch (Exception ex)
+  {    
+      var logger = service.GetService<ILogger<Program>>();
+      logger.LogError(ex,ex.Message);    
+  }
+
+  namespace API.Data
+  {
+      public class Seed
+      {
+          public static async Task  SeedUsers(DataContext context)
+          {
+              if(await context.Users.AnyAsync()) return;
+
+              var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
+              var options = new JsonSerializerOptions{PropertyNameCaseInsensitive = true};
+              var users = JsonSerializer.Deserialize<List<AppUser>>(userData,options);
+              foreach (var user in users)
+              {
+                  using var hmac = new HMACSHA512();
+                  user.UserName = user.UserName.ToLower();
+                  user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd"));
+                  user.PasswordSalt = hmac.Key;
+                  context.Users.Add(user);
+              }
+              await context.SaveChangesAsync();
+          }
+      }
+  }
+  --------------------------------------------------------------------------------------------------------------------
