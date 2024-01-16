@@ -1,4 +1,5 @@
 using API.Extensions;
+using API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,9 +8,17 @@ builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 
+builder.Services.AddScoped<ExceptionMiddleware>();
+
 var app = builder.Build();
 
+/* if(builder.Environment.IsDevelopment()){
+    app.UseDeveloperExceptionPage();
+} */
+
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionMiddleware>();
+
 app.UseHttpsRedirection();
 app.UseCors("Cors");
 
