@@ -4,12 +4,14 @@ import { BehaviorSubject, map, tap } from 'rxjs';
 import { User } from '../_models/user';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
-  private BASE_URL: string = 'https://localhost:5001/api';
+  private BASE_URL: string = environment.apiUrl;
   private httpClient = inject(HttpClient)
   private router = inject(Router);  
   private currentUserSource = new BehaviorSubject<User | null>(null);
@@ -18,7 +20,7 @@ export class AccountService {
   constructor() { }
 
   login(model: any){
-    return this.httpClient.post<User>(`${this.BASE_URL}/account/login`, model).pipe(
+    return this.httpClient.post<User>(`${this.BASE_URL}account/login`, model).pipe(
       tap((response: User)=>{
         const user = response;
         if(user){
@@ -30,7 +32,7 @@ export class AccountService {
   }
 
   register(model: any){
-    return this.httpClient.post<User>(`${this.BASE_URL}/account/register`, model).pipe(
+    return this.httpClient.post<User>(`${this.BASE_URL}account/register`, model).pipe(
       map(user=>{
         if(user){
           localStorage.setItem('user', JSON.stringify(user))
@@ -44,6 +46,11 @@ export class AccountService {
   setCurrentUser(){
     const user: User = JSON.parse(localStorage.getItem('user')!);
     this.currentUserSource.next(user);
+  }
+
+  getCurrentUser(){
+    const user: User = JSON.parse(localStorage.getItem('user')!);
+    return user;
   }
 
   logout(){

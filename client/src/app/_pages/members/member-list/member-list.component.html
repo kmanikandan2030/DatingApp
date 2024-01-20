@@ -1,7 +1,11 @@
-<p>member-list works!</p>
-<ul>
-  <li routerLink="m1" >Member-1</li>
-  <li routerLink="m2" >Member-2</li>
-  <li (click)="logout()" >Logout</li>
-</ul>
+@if(acctService.currentUser$ | async; as user){  
+ <h3>Welcome {{user.username | titlecase}}</h3>
+}
+<div class="row">
+  @for (member of members; track $index) {
+  <div class="col-2">
+    <app-member-card [member]="member" />
+  </div>
+  }
+</div>
 <router-outlet />

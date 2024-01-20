@@ -20,17 +20,15 @@ model: any = {
 }
 @Output() cancelRegister = new EventEmitter()
 accountService = inject(AccountService);
+validationErrors: string[] = [];
 
 register(){
   this.accountService.register(this.model).subscribe({
     next:(result)=>this.cancel(),
-    error: error => {      
-      const {errors} = error.error
-      Object.values<string>(errors).forEach(element => {
-         this.toastr.error(element);
-      });
-      
-    }
+    error: (err)=> {
+      console.log(err);
+      this.validationErrors = err;
+    }        
   });
 }
 cancel(){

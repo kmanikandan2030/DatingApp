@@ -17,8 +17,8 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class NavComponent implements OnInit {
   model: any = {
-    UserName: 'mani',
-    Password: 'mani'
+    UserName: 'lisa',
+    Password: 'Pa$$w0rd'
   };  
   accountService = inject(AccountService);
   router = inject(Router);

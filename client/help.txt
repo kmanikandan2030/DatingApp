@@ -1,0 +1,22 @@
+Read Angular Route Parameters
+------------------------------
+https://www.freecodecamp.org/news/use-input-for-angular-route-parameters/#:~:text=Starting%20with%20Angular%20v16%2C%20we,with%20Angular's%20Activated%20Route%20service.
+ <a [routerLink]="[product.id]"> {{ product.productName }} </a>  
+
+--OLD
+  private route = inject(ActivatedRoute);
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    //const id = this.route.snapshot.params['id']    
+    if (id) {
+      console.log(this.id);
+    }
+  }
+
+--NEW (Angular 16)
+ @Input() id = '';
+  ngOnInit(): void {
+    console.log(this.id);
+  }
+  --In app.config.ts
+  provideRouter(routes, withComponentInputBinding())

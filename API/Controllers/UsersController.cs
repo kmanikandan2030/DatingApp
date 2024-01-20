@@ -12,7 +12,7 @@ namespace API.Controllers;
 public class UsersController(IUserRepository repository, IMapper mapper) : BaseApiController
 {
 
-  [AllowAnonymous]
+  
   [HttpGet]
   public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers(){
     var users = await repository.GetMembersAsync();                
@@ -20,7 +20,7 @@ public class UsersController(IUserRepository repository, IMapper mapper) : BaseA
     return Ok(users);
   }
 
-  
+  [AllowAnonymous]
   [HttpGet("{id:int}")]
   public async Task<ActionResult<MemberDto>> GetUser(int id){
     var user = await repository.GetUserByIdAsync(id);    
