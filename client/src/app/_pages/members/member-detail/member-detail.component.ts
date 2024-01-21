@@ -1,10 +1,11 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Member } from '../../../_models/member';
 import { MembersService } from '../../../_services/members.service';
 import { CommonModule } from '@angular/common';
 import  {TabsModule} from 'ngx-bootstrap/tabs'
 import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
+import { Photo } from '../../../_models/photo';
 
 @Component({
   selector: 'app-member-detail',
@@ -13,8 +14,9 @@ import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
   templateUrl: './member-detail.component.html',
   styleUrl: './member-detail.component.css'
 })
-export class MemberDetailComponent implements OnInit {
-   @Input("id") username?: string;
+export class MemberDetailComponent implements OnInit {  
+
+  @Input("id") username?: string;
    member: Member | undefined;
    memberService = inject(MembersService);
    images: GalleryItem[] = [];
@@ -41,4 +43,6 @@ export class MemberDetailComponent implements OnInit {
     }
     
   }
+
+   
 }

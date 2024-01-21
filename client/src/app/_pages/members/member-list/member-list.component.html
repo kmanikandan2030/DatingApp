@@ -2,7 +2,7 @@
  <h3>Welcome {{user.username | titlecase}}</h3>
 }
 <div class="row">
-  @for (member of members; track $index) {
+  @for (member of members$|async; track $index) {
   <div class="col-2">
     <app-member-card [member]="member" />
   </div>

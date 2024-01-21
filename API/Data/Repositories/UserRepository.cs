@@ -34,8 +34,7 @@ namespace API.Data.Repositories
         public async Task<AppUser> GetUserByNameAsync(string username)
         {
             return await context.Users
-            .Include(x => x.Photos)
-            .AsNoTracking()
+            .Include(x => x.Photos)            
             .SingleOrDefaultAsync(x => x.UserName == username);
         }
 

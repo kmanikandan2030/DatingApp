@@ -53,9 +53,11 @@ export class AccountService {
     return user;
   }
 
-  logout(){
-    localStorage.removeItem('user');
-    this.currentUserSource.next(null)
-    this.router.navigateByUrl("/");
+  async logout(){    
+    var result = await this.router.navigateByUrl("/");      
+    if(result){        
+      localStorage.removeItem('user');
+      this.currentUserSource.next(null)
+    }    
   }
 }

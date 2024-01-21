@@ -4,6 +4,7 @@ using API.Interfaces.IRepositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 
 namespace API.Controllers;
@@ -36,6 +37,22 @@ public class UsersController(IUserRepository repository, IMapper mapper) : BaseA
     //var userToReturn = mapper.Map<MemberDto>(user);
     return Ok(user);
   }
+
+  [HttpPut]
+  public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+    {
+        var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        var user = await repository.GetUserByNameAsync(username);
+
+        if(user==null) return NotFound();
+
+        mapper.Map(memberUpdateDto, user);
+
+        if (await repository.SaveAllAsync()) return NoContent();
+
+        return BadRequest("Failed to update user");
+    }
 
 }
 

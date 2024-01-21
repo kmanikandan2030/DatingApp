@@ -20,3 +20,35 @@ https://www.freecodecamp.org/news/use-input-for-angular-route-parameters/#:~:tex
   }
   --In app.config.ts
   provideRouter(routes, withComponentInputBinding())
+
+How to invoke form submit when button is placed outside of form? 
+------------------------------------------------------------------
+1) Use property "id=editform" in the form control
+<form #editForm="ngForm" (ngSubmit)="updateMember()" id="editForm">
+</form>
+2) In button control, in property "form" use the same name of the id property as value. (i.e) "editForm" 
+<button class="btn btn-success col-12" type="submit" form="editForm">Save changes</button>
+
+Specifying the data type of template variable (#photoTab="tab")
+------------------------------------------------------------------
+<tab heading="Photos" #photoTab="tab">
+        @if (photoTab.active) {
+          <gallery [items]="images" class="gallery" thumbPosition="left"  />
+        }
+</tab>
+
+Template form
+----------------------
+1) Model Variable - member: Member | undefined;
+2) FORM Element - #editForm=(ngForm), (ngSubmit)="func()"
+3) INPUT Element - [(ngModel)]="member.username", name="username"  - Case Sensitive
+4) Access Form - @ViewChild('editForm') editForm: NgForm | undefined;  
+
+Alert before saving changes to Form
+---------------------------------------
+
+
+Function to Cast to "Any" type
+----------------------------------
+
+(change)="onQuantityChange($any($event.target).value)"

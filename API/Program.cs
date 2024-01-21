@@ -23,6 +23,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
 
+/*app.Use(async (context, next) =>
+{    
+    await Task.Delay(TimeSpan.FromSeconds(1));
+    await next(context);
+});*/
+
 app.UseHttpsRedirection();
 app.UseCors("Cors");
 

@@ -9,12 +9,13 @@ import { errorInterceptor } from './_interceptors/error.interceptor';
 import { jwtInterceptor } from './_interceptors/jwt.interceptor';
 
 import { GALLERY_CONFIG, GalleryConfig } from 'ng-gallery';
+import { loadingInterceptor } from './_interceptors/loading.interceptor';
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes,withComponentInputBinding()),
-    provideHttpClient(withInterceptors([errorInterceptor,jwtInterceptor])),
+    provideHttpClient(withInterceptors([errorInterceptor,jwtInterceptor,loadingInterceptor])),
     provideAnimationsAsync(),
     //provideAnimations(), // required animations providers
     provideToastr({

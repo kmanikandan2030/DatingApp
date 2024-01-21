@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { AccountService } from '../../../_services/account.service';
 import { Member } from '../../../_models/member';
@@ -6,6 +6,7 @@ import { MembersService } from '../../../_services/members.service';
 import { MemberCardComponent } from '../member-card/member-card.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-member-list',
@@ -15,17 +16,13 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './member-list.component.css'
 })
 export class MemberListComponent implements OnInit {
-  members: Member[] = [];
+  members$: Observable<Member[]> | undefined;
   memberService = inject(MembersService);
   acctService = inject(AccountService);
 
   ngOnInit(): void {
-    this.loadMembers();
+    this.members$ = this.memberService.getMembers()
   }
 
-  loadMembers(){
-    this.memberService.getMembers().subscribe({
-      next: result => this.members = result
-    });
-  }
+  
 }
